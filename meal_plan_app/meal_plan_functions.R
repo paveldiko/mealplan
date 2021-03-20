@@ -5,19 +5,23 @@ library(lubridate)
 library(reshape2)
 
 workingDir = '.'
-dishListFile = file.path(workingDir, 'dishData.csv')
-menusFile = file.path(workingDir, 'menus.csv')
+dishListFileId = 'https://onedrive.live.com/download?resid=EA257F6CE45ABBE0!2126&authkey=!AM_X9ceY2J7iFIQ&e=Xxtl3t'
+menusFileId = file.path(workingDir, 'menus.csv')
 
 dayTypes = c('workday', 'saturday', 'sunday')
 meals = c('breakfast', 'lunch', 'dinner')
 courses = c('soup', 'main')
 
-importDishList = function(source = dishListFile) {
+importDishList = function(source = dishListFileId) {
   # dishCode, dishName, 
   # workday, saturday, sunday, 
   # breakfast, lunch, dinner, 
   # soup, main
-  dishData = read.csv(source)
+  tmp = tempfile(fileext = '.csv')
+  download.file(source, 
+                destfile = tmp)
+  dishData = read.csv(tmp)
+  dishData = read.csv(dishListFileId)
   melt(dishData, id.vars = c('dishCode',
                              'dishName', 
                              'workday',
@@ -60,7 +64,7 @@ importMenus = function(fileId = menusFile) {
   menus
 }
 
-exportMenus = function(menus, fileId = menusFile) {
+exportMenus = function(menus, fileId = menusFileId) {
   write.csv(menus, fileId)
 }
 
