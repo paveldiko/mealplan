@@ -109,16 +109,16 @@ server <- function(input, output) {
                       width = 1000) %>%
             hot_col(col = 'Breakfast', 
                     type = 'dropdown',
-                    source = breakfasts$dishName) %>%
+                    source = unique(breakfasts$dishName)) %>%
             hot_col(col = 'Lunch soup', 
                     type = 'dropdown',
-                    source = lunchSoups$dishName) %>%
+                    source = unique(lunchSoups$dishName)) %>%
             hot_col(col = 'Lunch main', 
                     type = 'dropdown',
-                    source = lunchMains$dishName) %>%
+                    source = unique(lunchMains$dishName)) %>%
             hot_col(col = 'Dinner main', 
                     type = 'dropdown',
-                    source = dinnerMains$dishName)
+                    source = unique(dinnerMains$dishName))
         
         
         
