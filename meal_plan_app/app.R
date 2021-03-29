@@ -29,7 +29,10 @@ ui <- fluidPage(
                             )
                          )
                      ),
-            tabPanel('view', DT::dataTableOutput('table')),
+            tabPanel('view', verticalLayout(
+                downloadButton('downloadMenus', 'Download menus'),
+                DT::dataTableOutput('table')
+                )),
             tabPanel('Settings', dateRangeInput('menuDates', 
                                                 label = 'Menu date range:',
                                                 start = today(),
@@ -39,7 +42,7 @@ ui <- fluidPage(
 )
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(input, output, session) {
 
     dishList = importDishList()
     breakfasts = dishList %>%
@@ -56,7 +59,15 @@ server <- function(input, output) {
                             history = initialHistory)
 
     observeEvent(input$menuDates, {
-        menuDates = seq(input$menuDates[1], input$menuDates[2], by = 'day')
+
+        startDate = input$menuDates[1]
+        endDate = input$menuDates[2]
+        if (endDate < startDate) {
+            endDate = startDate
+            updateDateRangeInput(session, 'menuDates', start = startDate, end = endDate)
+        }
+        
+        menuDates = seq(startDate, endDate, by = 'day')
         proposedMenu = proposeMenu(menuDates, dishList)
         values[['menu']] = proposedMenu %>%
             transmute(date,
@@ -126,8 +137,40 @@ server <- function(input, output) {
     
     output$table = DT::renderDataTable({
         df = values[['history']]
-        DT::datatable(df)
+        df = df %>%
+            dcast(date ~ meal + course) %>%
+            mutate(wkday = weekdays(date, abbreviate = TRUE)) %>%
+            relocate(date,
+                     wkday,
+                     breakfast_main,
+                     lunch_soup,
+                     lunch_main,
+                     dinner_main)
+        
+        DT::datatable(df, 
+                      options = list(pageLength = 7, 
+                                     lengthMenu = c(7, 14, 28),
+                                     autoWidth = TRUE,
+                                     columnDefs = list(list(width = '10ex', targets = list(1))),
+                                     scrollX = TRUE
+                                     ),
+                      width = 1500,
+                      colnames = c(
+            'Date',
+            'WkDay',
+            'Breakfast',
+            'Lunch soup',
+            'Lunch main',
+            'Dinner main'
+        ))
     })
+    
+    output$downloadMenus = downloadHandler(
+        filename = 'menus.csv',
+        content = function(fileId) {
+            write.csv(values[['history']], fileId, row.names = FALSE)
+        }
+    )
     
     observeEvent(input$saveMenu, {
         # print('in save menu:')
@@ -200,7 +243,10 @@ server <- function(input, output) {
         flaggedMenu = inner_join(currentMenu, flags, 
                                  by = c('date', 'meal_course'))
         
-        menuDates = seq(input$menuDates[1], input$menuDates[2], by = 'day')
+        startDate = input$menuDates[1]
+        endDate = input$menuDates[2]
+
+        menuDates = seq(startDate, endDate, by = 'day')
         proposedMenu = proposeMenu(menuDates, dishList) %>%
             transmute(date,
                       meal_course = paste(meal, course, sep = '_'),

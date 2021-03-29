@@ -65,7 +65,7 @@ importMenus = function(fileId = menusFile) {
 }
 
 exportMenus = function(menus, fileId = menusFileId) {
-  write.csv(menus, fileId)
+  write.csv(menus, fileId, row.names = FALSE)
 }
 
 getCourseDishes = function(aDayType, aMeal, aCourse, dishList) {
