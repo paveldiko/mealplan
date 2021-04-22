@@ -6,6 +6,7 @@
 #
 #    http://shiny.rstudio.com/
 #
+rm(list = ls())
 
 library(rhandsontable)
 library(shiny)

@@ -53,7 +53,7 @@ importDishList = function(source = dishListFileId) {
 
 # importDishList()
 
-importMenus = function(fileId = menusFile) {
+importMenus = function(fileId = menusFileId) {
   menus = NULL
   
   if(file.exists(fileId)) {
