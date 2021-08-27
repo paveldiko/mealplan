@@ -5,7 +5,8 @@ library(lubridate)
 library(reshape2)
 
 workingDir = '.'
-dishListFileId = 'https://onedrive.live.com/download?resid=EA257F6CE45ABBE0!2126&authkey=!AM_X9ceY2J7iFIQ&e=Xxtl3t'
+# dishListFileId = 'https://onedrive.live.com/download?resid=EA257F6CE45ABBE0!2126&authkey=!AM_X9ceY2J7iFIQ&e=Xxtl3t'
+dishListFileId = 'https://onedrive.live.com/download?cid=EA257F6CE45ABBE0&resid=EA257F6CE45ABBE0%212168&authkey=AD9CNuyKxtYyHNA'
 menusFileId = file.path(workingDir, 'menus.csv')
 
 dayTypes = c('workday', 'saturday', 'sunday')
